@@ -15,7 +15,7 @@
     <script>
         document.getElementById('processButton').addEventListener('click', function() {
             // 发送POST请求到后端 Flask API
-            fetch("/", { // URL 现在匹配 Flask 路由
+            fetch("/random", { // URL 现在匹配 Flask 路由
                 method: "POST",
             })
             .then(response => response.blob()) // 处理BLOB响应
@@ -43,8 +43,36 @@
                 <option value="option2">选项2</option>
             </select>
         </div>
-        <textarea placeholder="在此输入你的描述"></textarea>
+        <textarea  name = "description" placeholder="在此输入你的描述"></textarea>
         <button id="alertButton" type="button">生成</button>
+        <script>
+            document.getElementById('alertButton').addEventListener('click', function() {
+                var gender = document.getElementById('dropdown1').value;
+                var model = document.getElementById('dropdown2').value;
+                var description = document.querySelector('textarea').value;
+
+                fetch("/generate", {  // URL 现在匹配 Flask 路由
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        gender: gender,
+                        model: model,
+                        description: description
+                    })
+                })
+                .then(response => response.blob()) // 处理BLOB响应
+                .then(blob => {
+                    // 创建一个URL并更新img的src属性显示处理过的图片
+                    const imageUrl = URL.createObjectURL(blob);
+                    document.getElementById('displayedImage').src = imageUrl;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+        </script>
     </div>
 </div>
 <script src="{{ url_for('static', filename='scripts.js') }}"></script>
